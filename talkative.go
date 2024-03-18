@@ -24,6 +24,7 @@ var (
 	ErrMessage  = errors.New("messages cannot be empty")    // Error for empty message list.
 	ErrInvoke   = errors.New("unable to invoke ollama api") // Error for failing to call the Ollama API.
 	ErrEncoding = errors.New("unable to encode")            // Error for problems encoding data to JSON.
+	ErrDecoding = errors.New("unable to decode")            // Error for problems encoding data to JSON.
 )
 
 // Client struct holds information for interacting with the Ollama API.

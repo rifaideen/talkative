@@ -111,7 +111,7 @@ func (c *Client) processChat(body io.ReadCloser, cb ChatCallBack) {
 		}
 
 		if err != nil {
-			cb(nil, err)
+			cb(nil, fmt.Errorf("%w: %v", ErrDecoding, err))
 
 			return
 		}
