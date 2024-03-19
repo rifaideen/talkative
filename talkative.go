@@ -21,7 +21,7 @@ const (
 var (
 	ErrUrl      = errors.New("url cannot be empty")         // Error for missing URL
 	ErrCallback = errors.New("callback cannot be empty")    // Error for missing callback function.
-	ErrMessage  = errors.New("messages cannot be empty")    // Error for empty message list.
+	ErrMessage  = errors.New("message cannot be empty")     // Error for empty message list.
 	ErrInvoke   = errors.New("unable to invoke ollama api") // Error for failing to call the Ollama API.
 	ErrEncoding = errors.New("unable to encode")            // Error for problems encoding data to JSON.
 	ErrDecoding = errors.New("unable to decode")            // Error for problems encoding data to JSON.
@@ -52,7 +52,8 @@ func New(url string) (*Client, error) {
 
 	return &Client{
 		urls: map[string]string{
-			"chat": url + "/api/chat", // Define the chat endpoint URL based on the provided base URL.
+			"chat":       url + "/api/chat",     // Define the chat endpoint URL based on the provided base URL.
+			"completion": url + "/api/generate", // Define the completion endpoint URL based on the provided base URL.
 		},
 		client: client,
 	}, nil
