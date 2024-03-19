@@ -112,21 +112,21 @@ func TestChatResponse(t *testing.T) {
 	server := mockServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		responses := []talkative.ChatResponse{
 			{
-				Model: "ollama",
+				Model: "llama2",
 				Message: talkative.Message{
 					Role:    talkative.ASSISTANT,
 					Content: "Hello",
 				},
 			},
 			{
-				Model: "ollama",
+				Model: "llama2",
 				Message: talkative.Message{
 					Role:    talkative.ASSISTANT,
 					Content: ", ",
 				},
 			},
 			{
-				Model: "ollama",
+				Model: "llama2",
 				Message: talkative.Message{
 					Role:    talkative.ASSISTANT,
 					Content: "It is nice talking to you.",
