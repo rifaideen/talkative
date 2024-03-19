@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 	"time"
 )
@@ -86,40 +85,10 @@ func (c *Client) Chat(cb ChatCallBack, msgs ...Message) (<-chan bool, error) {
 	chDone := make(chan bool)
 
 	go func() {
-		c.processChat(res.Body, cb)
+		StreamResponse(res.Body, cb)
 
 		chDone <- true
 	}()
 
 	return chDone, nil
-}
-
-// Processes the chat response from the server asynchronously.
-//
-// This function takes an io.ReadCloser object (`body`) representing the response body
-// and a callback function (`cb`) for handling individual responses and errors.
-// It iterates through the response, decoding each message and invoking the callback for processing.
-//
-// In case of errors during decoding or processing, the callback is invoked with the error
-// and processing stops. The function closes the response body before exiting.
-func (c *Client) processChat(body io.ReadCloser, cb ChatCallBack) {
-	defer body.Close()
-
-	for {
-		var response ChatResponse
-
-		err := json.NewDecoder(body).Decode(&response)
-
-		if err == io.EOF {
-			return
-		}
-
-		if err != nil {
-			cb(nil, fmt.Errorf("%w: %v", ErrDecoding, err))
-
-			return
-		}
-
-		cb(&response, nil)
-	}
 }
