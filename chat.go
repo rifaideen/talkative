@@ -21,16 +21,20 @@ type ChatRequest struct {
 
 // ChatResponse struct represents the response received from the Ollama API after processing chat messages.
 type ChatResponse struct {
-	Model              string    `json:"model"`                // The model used for processing.
-	Message            Message   `json:"message"`              // The response message.
-	CreatedAt          time.Time `json:"created_at"`           // Time the response was created on the server.
-	Done               bool      `json:"done"`                 // Indicates if processing is complete.
-	TotalDuration      int       `json:"total_duration"`       // Total processing time in milliseconds.
-	LoadDuration       int       `json:"load_duration"`        // Time spent loading the model (milliseconds).
-	PromptEvalCount    int       `json:"prompt_eval_count"`    // Number of prompt evaluations performed.
-	PromptEvalDuration int       `json:"prompt_eval_duration"` // Time spent on prompt evaluation (milliseconds).
-	EvalCount          int       `json:"eval_count"`           // Number of overall evaluations performed.
-	EvalDuration       int       `json:"eval_duration"`        // Time spent on overall evaluation (milliseconds).
+	Model       string    `json:"model"`      // The model used for processing.
+	Message     Message   `json:"message"`    // The response message.
+	CreatedAt   time.Time `json:"created_at"` // Time the response was created on the server.
+	Done        bool      `json:"done"`       // Indicates if processing is complete.
+	ChatMetrics           // The metrics associated about the chat
+}
+
+type ChatMetrics struct {
+	TotalDuration      int `json:"total_duration"`       // Total processing time in milliseconds.
+	LoadDuration       int `json:"load_duration"`        // Time spent loading the model (milliseconds).
+	PromptEvalCount    int `json:"prompt_eval_count"`    // Number of prompt evaluations performed.
+	PromptEvalDuration int `json:"prompt_eval_duration"` // Time spent on prompt evaluation (milliseconds).
+	EvalCount          int `json:"eval_count"`           // Number of overall evaluations performed.
+	EvalDuration       int `json:"eval_duration"`        // Time spent on overall evaluation (milliseconds).
 }
 
 // Initiates a chat process and asynchronously handles responses through a callback function.
