@@ -12,6 +12,10 @@ import (
 // Takes a pointer to a ChatResponse struct and an error as arguments.
 type ChatCallBack func(*ChatResponse, error)
 
+// PlainChatCallBack function type used for handling individual chat responses and errors.
+// Takes a string and an error as arguments.
+type PlainChatCallBack func(string, error)
+
 // ChatRequest struct represents the request body sent to the Ollama API for chat processing.
 type ChatRequest struct {
 	Model    string    `json:"model"`    // The model to be used for processing the chat.
@@ -86,6 +90,66 @@ func (c *Client) Chat(cb ChatCallBack, msgs ...Message) (<-chan bool, error) {
 
 	go func() {
 		StreamResponse(res.Body, cb)
+
+		chDone <- true
+	}()
+
+	return chDone, nil
+}
+
+// Initiates a plain chat process and asynchronously handles responses through a callback function.
+//
+// This method does not encode the response, instead it passes the string to the callback function.
+//
+// This function takes a callback function (`cb`) and a variable number of messages (`msgs`) as arguments.
+// It performs the following steps:
+//  1. Validates the callback and message arguments.
+//  2. Prepares a request body with the messages and model information.
+//  3. Sends a POST request to the chat endpoint from this client.
+//  4. Handles the response status code and potential errors.
+//  5. Launches a goroutine to process the chat response asynchronously.
+//  6. Returns a channel (`<-chan bool`) that signals completion of the chat process and any errors encountered.
+//
+// The callback function (`cb`) is responsible for handling individual chat responses and errors.
+// The completion channel (`<-chan bool`) allows the caller to track the progress of the chat process if needed.
+//
+// Note that the channel (`chDone`) is not explicitly closed in this example. However, the goroutine
+// running `processChat` terminates naturally after sending the completion signal (`true`),
+// effectively indicating no more data will be received on the channel.
+func (c *Client) PlainChat(cb PlainChatCallBack, msgs ...Message) (<-chan bool, error) {
+	if cb == nil {
+		return nil, ErrCallback
+	}
+
+	if len(msgs) == 0 {
+		return nil, ErrMessage
+	}
+
+	request := ChatRequest{
+		Model:    "llama2",
+		Messages: msgs,
+	}
+
+	body := &bytes.Buffer{}
+
+	if err := json.NewEncoder(body).Encode(request); err != nil {
+		return nil, fmt.Errorf("%w:%v", ErrEncoding, err)
+	}
+
+	res, err := c.client.Post(c.urls["chat"], "application/json", body)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if res.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("%w: please make sure ollama server is running and url is correct", ErrInvoke)
+	}
+
+	chDone := make(chan bool)
+
+	go func() {
+		StreamPlainResponse(res.Body, cb)
 
 		chDone <- true
 	}()
