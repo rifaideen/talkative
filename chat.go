@@ -57,7 +57,7 @@ type ChatMetrics struct {
 // Note that the channel (`chDone`) is not explicitly closed in this example. However, the goroutine
 // running `processChat` terminates naturally after sending the completion signal (`true`),
 // effectively indicating no more data will be received on the channel.
-func (c *Client) Chat(cb ChatCallBack, msgs ...Message) (<-chan bool, error) {
+func (c *Client) Chat(model string, cb ChatCallBack, msgs ...Message) (<-chan bool, error) {
 	if cb == nil {
 		return nil, ErrCallback
 	}
@@ -66,8 +66,12 @@ func (c *Client) Chat(cb ChatCallBack, msgs ...Message) (<-chan bool, error) {
 		return nil, ErrMessage
 	}
 
+	if model == "" {
+		model = DEFAULT_MODEL
+	}
+
 	request := ChatRequest{
-		Model:    "llama2",
+		Model:    model,
 		Messages: msgs,
 	}
 	body := &bytes.Buffer{}
@@ -116,7 +120,7 @@ func (c *Client) Chat(cb ChatCallBack, msgs ...Message) (<-chan bool, error) {
 // Note that the channel (`chDone`) is not explicitly closed in this example. However, the goroutine
 // running `processChat` terminates naturally after sending the completion signal (`true`),
 // effectively indicating no more data will be received on the channel.
-func (c *Client) PlainChat(cb PlainChatCallBack, msgs ...Message) (<-chan bool, error) {
+func (c *Client) PlainChat(model string, cb PlainChatCallBack, msgs ...Message) (<-chan bool, error) {
 	if cb == nil {
 		return nil, ErrCallback
 	}
@@ -125,8 +129,12 @@ func (c *Client) PlainChat(cb PlainChatCallBack, msgs ...Message) (<-chan bool, 
 		return nil, ErrMessage
 	}
 
+	if model == "" {
+		model = DEFAULT_MODEL
+	}
+
 	request := ChatRequest{
-		Model:    "llama2",
+		Model:    model,
 		Messages: msgs,
 	}
 

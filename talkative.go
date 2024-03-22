@@ -15,6 +15,9 @@ const (
 
 	// Assistant role for AI assistants or chatbots.
 	ASSISTANT Role = "assistant"
+
+	// Default model to be used when model is not specified.
+	DEFAULT_MODEL string = "llama2"
 )
 
 // Pre-defined errors used throughout the code for consistency.
