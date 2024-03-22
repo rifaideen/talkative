@@ -128,21 +128,21 @@ func TestChatResponse(t *testing.T) {
 	server := mockServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		responses := []talkative.ChatResponse{
 			{
-				Model: "llama2",
+				Model: talkative.DEFAULT_MODEL,
 				Message: talkative.Message{
 					Role:    talkative.ASSISTANT,
 					Content: "Hello",
 				},
 			},
 			{
-				Model: "llama2",
+				Model: talkative.DEFAULT_MODEL,
 				Message: talkative.Message{
 					Role:    talkative.ASSISTANT,
 					Content: ", ",
 				},
 			},
 			{
-				Model: "llama2",
+				Model: talkative.DEFAULT_MODEL,
 				Message: talkative.Message{
 					Role:    talkative.ASSISTANT,
 					Content: "It is nice talking to you.",
@@ -324,21 +324,21 @@ func TestPlainChatResponse(t *testing.T) {
 	server := mockServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		responses := []talkative.ChatResponse{
 			{
-				Model: "llama2",
+				Model: talkative.DEFAULT_MODEL,
 				Message: talkative.Message{
 					Role:    talkative.ASSISTANT,
 					Content: "Hello",
 				},
 			},
 			{
-				Model: "llama2",
+				Model: talkative.DEFAULT_MODEL,
 				Message: talkative.Message{
 					Role:    talkative.ASSISTANT,
 					Content: ", ",
 				},
 			},
 			{
-				Model: "llama2",
+				Model: talkative.DEFAULT_MODEL,
 				Message: talkative.Message{
 					Role:    talkative.ASSISTANT,
 					Content: "It is nice talking to you.",
