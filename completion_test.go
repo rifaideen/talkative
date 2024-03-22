@@ -30,6 +30,12 @@ func TestCompletionValidation(t *testing.T) {
 			return
 		}
 
+		if scenario == "bad-request" {
+			w.WriteHeader(400)
+			w.Write([]byte(`{"error": "invalid request"}`))
+			return
+		}
+
 		// Add more scenarios
 	}))
 
@@ -41,54 +47,64 @@ func TestCompletionValidation(t *testing.T) {
 		assert.NotNil(t, client)
 	}
 
-	done, err := client.Completion(nil, nil)
+	done, err := client.Completion("", nil, nil)
 	{
 		assert.Nil(t, done)
 		assert.ErrorIs(t, err, talkative.ErrCallback)
+	}
+
+	// Assert no message error
+	done, err = client.Completion(talkative.DEFAULT_MODEL, func(cr *talkative.CompletionResponse, err error) {}, nil)
+	{
+		assert.Nil(t, done)
+		assert.ErrorIs(t, err, talkative.ErrMessage)
 	}
 
 	// Begin scenario based validation
 
 	scenario = "not-found"
 	{
-		done, err = client.Completion(func(cr *talkative.CompletionResponse, err error) {}, nil)
+		done, err = client.Completion(talkative.DEFAULT_MODEL, func(cr *talkative.CompletionResponse, err error) {}, message)
 
 		assert.Nil(t, done)
-		assert.ErrorIs(t, err, talkative.ErrMessage)
-
-		done, err = client.Completion(func(cr *talkative.CompletionResponse, err error) {}, message)
-		{
-			assert.Nil(t, done)
-			assert.ErrorIs(t, err, talkative.ErrInvoke)
-		}
-
-		scenario = "non-json"
-		{
-			done, err = client.Completion(func(cr *talkative.CompletionResponse, err error) {
-				assert.ErrorIs(t, err, talkative.ErrDecoding)
-			}, message)
-
-			assert.Nil(t, err)
-			assert.NotNil(t, done)
-
-			<-done // wait for completion
-		}
+		assert.ErrorIs(t, err, talkative.ErrInvoke)
 	}
+
+	scenario = "non-json"
+	{
+		done, err = client.Completion(talkative.DEFAULT_MODEL, func(cr *talkative.CompletionResponse, err error) {
+			assert.ErrorIs(t, err, talkative.ErrDecoding)
+		}, message)
+
+		assert.Nil(t, err)
+		assert.NotNil(t, done)
+
+		<-done // wait for completion
+	}
+
+	scenario = "bad-request"
+	{
+		done, err = client.Completion("", func(cr *talkative.CompletionResponse, err error) {}, message)
+
+		assert.Nil(t, done)
+		assert.ErrorIs(t, err, talkative.ErrBadRequest)
+	}
+
 }
 
 func TestCompletionResponse(t *testing.T) {
 	server := mockServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		responses := []talkative.CompletionResponse{
 			{
-				Model:    "llama2",
+				Model:    talkative.DEFAULT_MODEL,
 				Response: "Hello",
 			},
 			{
-				Model:    "llama2",
+				Model:    talkative.DEFAULT_MODEL,
 				Response: ", ",
 			},
 			{
-				Model:    "llama2",
+				Model:    talkative.DEFAULT_MODEL,
 				Response: "It is nice talking to you.",
 			},
 		}
@@ -136,7 +152,7 @@ func TestCompletionResponse(t *testing.T) {
 
 	sb := strings.Builder{}
 
-	done, err := client.Completion(func(cr *talkative.CompletionResponse, err error) {
+	done, err := client.Completion("", func(cr *talkative.CompletionResponse, err error) {
 		if err != nil {
 			fmt.Println("Error: ", err)
 		} else {

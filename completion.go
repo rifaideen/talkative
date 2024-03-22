@@ -71,7 +71,7 @@ type CompletionCallback func(*CompletionResponse, error)
 // The method constructs a CompletionRequest from the provided message, encodes it into JSON, and sends it to the server.
 // It handles HTTP response status codes, specifically checking for a BadRequest (400) to return any server-side error messages.
 // Upon a successful request, it starts a goroutine to stream the response and invoke the provided callback function, signaling completion through the returned channel.
-func (c *Client) Completion(cb CompletionCallback, msg *CompletionMessage) (<-chan bool, error) {
+func (c *Client) Completion(model string, cb CompletionCallback, msg *CompletionMessage) (<-chan bool, error) {
 	if cb == nil {
 		return nil, ErrCallback
 	}
@@ -80,8 +80,12 @@ func (c *Client) Completion(cb CompletionCallback, msg *CompletionMessage) (<-ch
 		return nil, ErrMessage
 	}
 
+	if model == "" {
+		model = DEFAULT_MODEL
+	}
+
 	request := CompletionRequest{
-		Model:  "llama2",
+		Model:  model,
 		Prompt: msg.Prompt,
 		Images: msg.Images,
 	}
@@ -98,15 +102,16 @@ func (c *Client) Completion(cb CompletionCallback, msg *CompletionMessage) (<-ch
 	}
 
 	if res.StatusCode != http.StatusOK {
-		if res.StatusCode == http.StatusBadRequest {
+		switch res.StatusCode {
+		case http.StatusBadRequest:
 			defer res.Body.Close()
 
 			body, _ := io.ReadAll(res.Body)
 
-			return nil, fmt.Errorf("%s", body)
+			return nil, fmt.Errorf("%w\n%v", ErrBadRequest, body)
+		default:
+			return nil, fmt.Errorf("%w: please make sure ollama server is running and url is correct", ErrInvoke)
 		}
-
-		return nil, fmt.Errorf("%w: please make sure ollama server is running and url is correct", ErrInvoke)
 	}
 
 	chDone := make(chan bool, 1)
