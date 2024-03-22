@@ -22,12 +22,13 @@ const (
 
 // Pre-defined errors used throughout the code for consistency.
 var (
-	ErrUrl      = errors.New("url cannot be empty")         // Error for missing URL
-	ErrCallback = errors.New("callback cannot be empty")    // Error for missing callback function.
-	ErrMessage  = errors.New("message cannot be empty")     // Error for empty message list.
-	ErrInvoke   = errors.New("unable to invoke ollama api") // Error for failing to call the Ollama API.
-	ErrEncoding = errors.New("unable to encode")            // Error for problems encoding data to JSON.
-	ErrDecoding = errors.New("unable to decode")            // Error for problems encoding data to JSON.
+	ErrUrl        = errors.New("url cannot be empty")                 // Error for missing URL
+	ErrCallback   = errors.New("callback cannot be empty")            // Error for missing callback function.
+	ErrMessage    = errors.New("message cannot be empty")             // Error for empty message list.
+	ErrInvoke     = errors.New("unable to invoke ollama api")         // Error for failing to call the Ollama API.
+	ErrEncoding   = errors.New("unable to encode")                    // Error for problems encoding data to JSON.
+	ErrDecoding   = errors.New("unable to decode")                    // Error for problems encoding data to JSON.
+	ErrBadRequest = errors.New("unable to perform operation request") // Error for bad request response from Ollama API.
 )
 
 // Client struct holds information for interacting with the Ollama API.
