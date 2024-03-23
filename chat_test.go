@@ -134,21 +134,21 @@ func TestChatResponse(t *testing.T) {
 		responses := []talkative.ChatResponse{
 			{
 				Model: talkative.DEFAULT_MODEL,
-				ChatMessage: talkative.ChatMessage{
+				Message: talkative.ChatMessage{
 					Role:    talkative.ASSISTANT,
 					Content: "Hello",
 				},
 			},
 			{
 				Model: talkative.DEFAULT_MODEL,
-				ChatMessage: talkative.ChatMessage{
+				Message: talkative.ChatMessage{
 					Role:    talkative.ASSISTANT,
 					Content: ", ",
 				},
 			},
 			{
 				Model: talkative.DEFAULT_MODEL,
-				ChatMessage: talkative.ChatMessage{
+				Message: talkative.ChatMessage{
 					Role:    talkative.ASSISTANT,
 					Content: "It is nice talking to you.",
 				},
@@ -203,7 +203,7 @@ func TestChatResponse(t *testing.T) {
 		if err != nil {
 			fmt.Println("Error: ", err)
 		} else {
-			sb.WriteString(cr.ChatMessage.Content)
+			sb.WriteString(cr.Message.Content)
 		}
 	},
 		nil,
@@ -333,21 +333,21 @@ func TestPlainChatResponse(t *testing.T) {
 		responses := []talkative.ChatResponse{
 			{
 				Model: talkative.DEFAULT_MODEL,
-				ChatMessage: talkative.ChatMessage{
+				Message: talkative.ChatMessage{
 					Role:    talkative.ASSISTANT,
 					Content: "Hello",
 				},
 			},
 			{
 				Model: talkative.DEFAULT_MODEL,
-				ChatMessage: talkative.ChatMessage{
+				Message: talkative.ChatMessage{
 					Role:    talkative.ASSISTANT,
 					Content: ", ",
 				},
 			},
 			{
 				Model: talkative.DEFAULT_MODEL,
-				ChatMessage: talkative.ChatMessage{
+				Message: talkative.ChatMessage{
 					Role:    talkative.ASSISTANT,
 					Content: "It is nice talking to you.",
 				},
@@ -409,7 +409,7 @@ func TestPlainChatResponse(t *testing.T) {
 				return
 			}
 
-			sb.WriteString(response.ChatMessage.Content)
+			sb.WriteString(response.Message.Content)
 		}
 	}, nil, message)
 

@@ -43,7 +43,7 @@ type ChatRequest struct {
 // ChatResponse struct represents the response received from the Ollama API after processing chat messages.
 type ChatResponse struct {
 	Model       string      `json:"model"`      // The model used for processing.
-	ChatMessage ChatMessage `json:"message"`    // The response message.
+	Message     ChatMessage `json:"message"`    // The response message.
 	CreatedAt   time.Time   `json:"created_at"` // Time the response was created on the server.
 	Done        bool        `json:"done"`       // Indicates if processing is complete.
 	ChatMetrics             // The metrics associated about the chat
