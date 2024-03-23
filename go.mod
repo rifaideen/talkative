@@ -1,4 +1,4 @@
-module talkative
+module github.com/rifaideen/talkative
 
 go 1.21.1
 
