@@ -29,7 +29,7 @@ import (
 // Parameters:
 // - t: A *testing.T object for running assertions.
 func TestChatValidation(t *testing.T) {
-	message := talkative.Message{
+	message := talkative.ChatMessage{
 		Role:    talkative.USER,
 		Content: "Hi there!",
 	}
@@ -129,21 +129,21 @@ func TestChatResponse(t *testing.T) {
 		responses := []talkative.ChatResponse{
 			{
 				Model: talkative.DEFAULT_MODEL,
-				Message: talkative.Message{
+				ChatMessage: talkative.ChatMessage{
 					Role:    talkative.ASSISTANT,
 					Content: "Hello",
 				},
 			},
 			{
 				Model: talkative.DEFAULT_MODEL,
-				Message: talkative.Message{
+				ChatMessage: talkative.ChatMessage{
 					Role:    talkative.ASSISTANT,
 					Content: ", ",
 				},
 			},
 			{
 				Model: talkative.DEFAULT_MODEL,
-				Message: talkative.Message{
+				ChatMessage: talkative.ChatMessage{
 					Role:    talkative.ASSISTANT,
 					Content: "It is nice talking to you.",
 				},
@@ -187,7 +187,7 @@ func TestChatResponse(t *testing.T) {
 	assert.NotNil(t, client)
 	assert.NoError(t, err)
 
-	message := talkative.Message{
+	message := talkative.ChatMessage{
 		Role:    talkative.USER,
 		Content: "Hi there!",
 	}
@@ -198,7 +198,7 @@ func TestChatResponse(t *testing.T) {
 		if err != nil {
 			fmt.Println("Error: ", err)
 		} else {
-			sb.WriteString(cr.Message.Content)
+			sb.WriteString(cr.ChatMessage.Content)
 		}
 	}, message)
 
@@ -225,7 +225,7 @@ func TestChatResponse(t *testing.T) {
 // Parameters:
 // - t: A *testing.T object for running assertions.
 func TestPlainChatValidation(t *testing.T) {
-	message := talkative.Message{
+	message := talkative.ChatMessage{
 		Role:    talkative.USER,
 		Content: "Hi there!",
 	}
@@ -325,21 +325,21 @@ func TestPlainChatResponse(t *testing.T) {
 		responses := []talkative.ChatResponse{
 			{
 				Model: talkative.DEFAULT_MODEL,
-				Message: talkative.Message{
+				ChatMessage: talkative.ChatMessage{
 					Role:    talkative.ASSISTANT,
 					Content: "Hello",
 				},
 			},
 			{
 				Model: talkative.DEFAULT_MODEL,
-				Message: talkative.Message{
+				ChatMessage: talkative.ChatMessage{
 					Role:    talkative.ASSISTANT,
 					Content: ", ",
 				},
 			},
 			{
 				Model: talkative.DEFAULT_MODEL,
-				Message: talkative.Message{
+				ChatMessage: talkative.ChatMessage{
 					Role:    talkative.ASSISTANT,
 					Content: "It is nice talking to you.",
 				},
@@ -383,7 +383,7 @@ func TestPlainChatResponse(t *testing.T) {
 	assert.NotNil(t, client)
 	assert.NoError(t, err)
 
-	message := talkative.Message{
+	message := talkative.ChatMessage{
 		Role:    talkative.USER,
 		Content: "Hi there!",
 	}
@@ -401,7 +401,7 @@ func TestPlainChatResponse(t *testing.T) {
 				return
 			}
 
-			sb.WriteString(response.Message.Content)
+			sb.WriteString(response.ChatMessage.Content)
 		}
 	}, message)
 

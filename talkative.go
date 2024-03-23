@@ -37,12 +37,6 @@ type Client struct {
 	client *http.Client      // Holds an http.Client instance for making HTTP requests.
 }
 
-// Message struct represents a single message sent or received in the chat.
-type Message struct {
-	Role    Role   `json:"role"`    // Role of the sender (user or assistant).
-	Content string `json:"content"` // Content of the message.
-}
-
 // New function creates a new Client instance for interacting with the Ollama API.
 // Takes the base URL of the Ollama API as an argument.
 func New(url string) (*Client, error) {

@@ -9,6 +9,12 @@ import (
 	"time"
 )
 
+// ChatMessage struct represents a single message sent or received in the chat.
+type ChatMessage struct {
+	Role    Role   `json:"role"`    // Role of the sender (user or assistant).
+	Content string `json:"content"` // Content of the message.
+}
+
 // Callback function type used for handling individual chat responses and errors.
 // Takes a pointer to a ChatResponse struct and an error as arguments.
 type ChatCallBack func(*ChatResponse, error)
@@ -19,17 +25,17 @@ type PlainChatCallBack func(string, error)
 
 // ChatRequest struct represents the request body sent to the Ollama API for chat processing.
 type ChatRequest struct {
-	Model    string    `json:"model"`    // The model to be used for processing the chat.
-	Messages []Message `json:"messages"` // List of messages to be processed.
+	Model    string        `json:"model"`    // The model to be used for processing the chat.
+	Messages []ChatMessage `json:"messages"` // List of messages to be processed.
 }
 
 // ChatResponse struct represents the response received from the Ollama API after processing chat messages.
 type ChatResponse struct {
-	Model       string    `json:"model"`      // The model used for processing.
-	Message     Message   `json:"message"`    // The response message.
-	CreatedAt   time.Time `json:"created_at"` // Time the response was created on the server.
-	Done        bool      `json:"done"`       // Indicates if processing is complete.
-	ChatMetrics           // The metrics associated about the chat
+	Model       string      `json:"model"`      // The model used for processing.
+	ChatMessage ChatMessage `json:"message"`    // The response message.
+	CreatedAt   time.Time   `json:"created_at"` // Time the response was created on the server.
+	Done        bool        `json:"done"`       // Indicates if processing is complete.
+	ChatMetrics             // The metrics associated about the chat
 }
 
 type ChatMetrics struct {
@@ -59,7 +65,7 @@ type ChatMetrics struct {
 // Note that the channel (`chDone`) is not explicitly closed in this example. However, the goroutine
 // running `processChat` terminates naturally after sending the completion signal (`true`),
 // effectively indicating no more data will be received on the channel.
-func (c *Client) Chat(model string, cb ChatCallBack, msgs ...Message) (<-chan bool, error) {
+func (c *Client) Chat(model string, cb ChatCallBack, msgs ...ChatMessage) (<-chan bool, error) {
 	if cb == nil {
 		return nil, ErrCallback
 	}
@@ -132,7 +138,7 @@ func (c *Client) Chat(model string, cb ChatCallBack, msgs ...Message) (<-chan bo
 // Note that the channel (`chDone`) is not explicitly closed in this example. However, the goroutine
 // running `processChat` terminates naturally after sending the completion signal (`true`),
 // effectively indicating no more data will be received on the channel.
-func (c *Client) PlainChat(model string, cb PlainChatCallBack, msgs ...Message) (<-chan bool, error) {
+func (c *Client) PlainChat(model string, cb PlainChatCallBack, msgs ...ChatMessage) (<-chan bool, error) {
 	if cb == nil {
 		return nil, ErrCallback
 	}
