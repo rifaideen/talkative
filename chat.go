@@ -120,24 +120,7 @@ func (c *Client) Chat(model string, cb ChatCallBack, msgs ...ChatMessage) (<-cha
 
 // Initiates a plain chat process and asynchronously handles responses through a callback function.
 //
-// This method does not encode the response, instead it passes the string to the callback function.
-//
-// This function takes model name, callback function (`cb`) and a variable number of messages (`msgs`) as arguments.
-// It performs the following steps:
-//  1. Validates the model, callback and message arguments.
-//  2. When model is empty, it uses the model to DEFAULT_MODEL to perform the operation.
-//  3. Prepares a request body with the messages and model information.
-//  4. Sends a POST request to the chat endpoint from this client.
-//  5. Handles the response status code and potential errors.
-//  6. Launches a goroutine to process the chat response asynchronously.
-//  7. Returns a channel (`<-chan bool`) that signals completion of the chat process and any errors encountered.
-//
-// The callback function (`cb`) is responsible for handling individual chat responses and errors.
-// The completion channel (`<-chan bool`) allows the caller to track the progress of the chat process if needed.
-//
-// Note that the channel (`chDone`) is not explicitly closed in this example. However, the goroutine
-// running `processChat` terminates naturally after sending the completion signal (`true`),
-// effectively indicating no more data will be received on the channel.
+// This method is identical to Chat(), except that it invokes the callback with plain json string without further processing.
 func (c *Client) PlainChat(model string, cb PlainChatCallBack, msgs ...ChatMessage) (<-chan bool, error) {
 	if cb == nil {
 		return nil, ErrCallback
