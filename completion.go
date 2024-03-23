@@ -10,15 +10,29 @@ import (
 
 // CompletionRequest represents a request for completion.
 type CompletionRequest struct {
-	Model  string   `json:"model"`  // The model to use for completion.
-	Prompt string   `json:"prompt"` // The prompt for completion.
-	Images []string `json:"images"` // The images associated with the completion.
+	Model             string              `json:"model"`  // The model to use for completion.
+	Prompt            string              `json:"prompt"` // The prompt for completion.
+	Images            []string            `json:"images"` // The images associated with the completion.
+	*CompletionParams `json:",omitempty"` // The additional parameters for the completion
 }
 
 // CompletionMessage represents the message structure for initiating a completion request.
 type CompletionMessage struct {
 	Prompt string   `json:"prompt"` // The text prompt to be completed.
 	Images []string `json:"images"` // A list of image URLs associated with the prompt.
+
+	*CompletionParams `json:",omitempty"` // The additional parameters for the completion
+}
+
+// CompletionParams represents the advanced parameters (Optional) to be supplied to the completion request.
+type CompletionParams struct {
+	Format    string                 `json:"format,omitempty"`     // The format to be used in the completion response
+	Options   map[string]interface{} `json:"options,omitempty"`    // The additional model parameters  listed in the Modelfile documentation
+	System    string                 `json:"system,omitempty"`     // The system message to (overrides what is defined in the Modelfile)
+	Context   interface{}            `json:"context,omitempty"`    // The context parameter returned from previous request to completion, to keep short conversational memory
+	Stream    *bool                  `json:"stream,omitempty"`     // Whether to get response in single shot rather than streaming
+	Raw       bool                   `json:"raw,omitempty"`        // If true, no formatting will be applied to the prompt
+	KeepAlive string                 `json:"keep_alive,omitempty"` // How long to keep the model will stay loaded into the memory. Default to 5m(inutes)
 }
 
 // CompletionResponse represents the response received after a completion request.
@@ -93,9 +107,10 @@ func (c *Client) Completion(model string, cb CompletionCallback, msg *Completion
 	}
 
 	request := CompletionRequest{
-		Model:  model,
-		Prompt: msg.Prompt,
-		Images: msg.Images,
+		Model:            model,
+		Prompt:           msg.Prompt,
+		Images:           msg.Images,
+		CompletionParams: msg.CompletionParams,
 	}
 	body := &bytes.Buffer{}
 
@@ -116,7 +131,7 @@ func (c *Client) Completion(model string, cb CompletionCallback, msg *Completion
 
 			body, _ := io.ReadAll(res.Body)
 
-			return nil, fmt.Errorf("%w\n%v", ErrBadRequest, body)
+			return nil, fmt.Errorf("%w%s", ErrBadRequest, body)
 		default:
 			return nil, fmt.Errorf("%w: please make sure ollama server is running and url is correct", ErrInvoke)
 		}
