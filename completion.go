@@ -29,6 +29,7 @@ type CompletionParams struct {
 	Format    string                 `json:"format,omitempty"`     // The format to be used in the completion response
 	Options   map[string]interface{} `json:"options,omitempty"`    // The additional model parameters  listed in the Modelfile documentation
 	System    string                 `json:"system,omitempty"`     // The system message to use (overrides what is defined in the Modelfile)
+	Template  string                 `json:"template,omitempty"`   // The template to use (overrides what is defined in the Modelfile)
 	Context   interface{}            `json:"context,omitempty"`    // The context parameter returned from previous request to completion, to keep short conversational memory
 	Stream    *bool                  `json:"stream,omitempty"`     // Whether to get response in single shot rather than streaming
 	Raw       bool                   `json:"raw,omitempty"`        // If true, no formatting will be applied to the prompt
