@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
-	"talkative"
 	"testing"
 	"time"
+
+	"github.com/rifaideen/talkative"
 
 	"github.com/stretchr/testify/assert"
 )

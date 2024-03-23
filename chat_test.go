@@ -7,9 +7,10 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"strings"
-	"talkative"
 	"testing"
 	"time"
+
+	"github.com/rifaideen/talkative"
 
 	"github.com/stretchr/testify/assert"
 )

@@ -1,8 +1,9 @@
 package talkative_test
 
 import (
-	"talkative"
 	"testing"
+
+	"github.com/rifaideen/talkative"
 
 	"github.com/stretchr/testify/assert"
 )
