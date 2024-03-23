@@ -15,6 +15,15 @@ type ChatMessage struct {
 	Content string `json:"content"` // Content of the message.
 }
 
+// CompletionParams represents the advanced parameters (Optional) to be supplied to the completion request.
+type ChatParams struct {
+	Format    string                 `json:"format,omitempty"`     // The format to be used in the completion response
+	Options   map[string]interface{} `json:"options,omitempty"`    // The additional model parameters  listed in the Modelfile documentation
+	Template  string                 `json:"template,omitempty"`   // The prompt template to use (overrides what is defined in the Modelfile)
+	Stream    *bool                  `json:"stream,omitempty"`     // Whether to get response in single shot rather than streaming
+	KeepAlive string                 `json:"keep_alive,omitempty"` // How long to keep the model will stay loaded into the memory. Default to 5m(inutes)
+}
+
 // Callback function type used for handling individual chat responses and errors.
 // Takes a pointer to a ChatResponse struct and an error as arguments.
 type ChatCallBack func(*ChatResponse, error)
@@ -27,6 +36,8 @@ type PlainChatCallBack func(string, error)
 type ChatRequest struct {
 	Model    string        `json:"model"`    // The model to be used for processing the chat.
 	Messages []ChatMessage `json:"messages"` // List of messages to be processed.
+
+	*ChatParams `json:",omitempty"` // The additional parameters for the chat
 }
 
 // ChatResponse struct represents the response received from the Ollama API after processing chat messages.
@@ -65,7 +76,7 @@ type ChatMetrics struct {
 // Note that the channel (`chDone`) is not explicitly closed in this example. However, the goroutine
 // running `processChat` terminates naturally after sending the completion signal (`true`),
 // effectively indicating no more data will be received on the channel.
-func (c *Client) Chat(model string, cb ChatCallBack, msgs ...ChatMessage) (<-chan bool, error) {
+func (c *Client) Chat(model string, cb ChatCallBack, params *ChatParams, msgs ...ChatMessage) (<-chan bool, error) {
 	if cb == nil {
 		return nil, ErrCallback
 	}
@@ -79,8 +90,9 @@ func (c *Client) Chat(model string, cb ChatCallBack, msgs ...ChatMessage) (<-cha
 	}
 
 	request := ChatRequest{
-		Model:    model,
-		Messages: msgs,
+		Model:      model,
+		Messages:   msgs,
+		ChatParams: params,
 	}
 	body := &bytes.Buffer{}
 
@@ -121,7 +133,7 @@ func (c *Client) Chat(model string, cb ChatCallBack, msgs ...ChatMessage) (<-cha
 // Initiates a plain chat process and asynchronously handles responses through a callback function.
 //
 // This method is identical to Chat(), except that it invokes the callback with plain json string without further processing.
-func (c *Client) PlainChat(model string, cb PlainChatCallBack, msgs ...ChatMessage) (<-chan bool, error) {
+func (c *Client) PlainChat(model string, cb PlainChatCallBack, params *ChatParams, msgs ...ChatMessage) (<-chan bool, error) {
 	if cb == nil {
 		return nil, ErrCallback
 	}
@@ -135,8 +147,9 @@ func (c *Client) PlainChat(model string, cb PlainChatCallBack, msgs ...ChatMessa
 	}
 
 	request := ChatRequest{
-		Model:    model,
-		Messages: msgs,
+		Model:      model,
+		Messages:   msgs,
+		ChatParams: params,
 	}
 
 	body := &bytes.Buffer{}
