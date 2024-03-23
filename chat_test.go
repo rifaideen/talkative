@@ -65,14 +65,14 @@ func TestChatValidation(t *testing.T) {
 	}
 
 	// Assert callback error
-	done, err := client.Chat(talkative.DEFAULT_MODEL, nil)
+	done, err := client.Chat(talkative.DEFAULT_MODEL, nil, nil)
 	{
 		assert.Nil(t, done)
 		assert.ErrorIs(t, err, talkative.ErrCallback)
 	}
 
 	// Assert message error
-	done, err = client.Chat(talkative.DEFAULT_MODEL, func(cr *talkative.ChatResponse, err error) {})
+	done, err = client.Chat(talkative.DEFAULT_MODEL, func(cr *talkative.ChatResponse, err error) {}, nil)
 	{
 		assert.Nil(t, done)
 		assert.ErrorIs(t, err, talkative.ErrMessage)
@@ -82,7 +82,7 @@ func TestChatValidation(t *testing.T) {
 
 	scenario = "not-found"
 	{
-		done, err = client.Chat(talkative.DEFAULT_MODEL, func(cr *talkative.ChatResponse, err error) {}, message)
+		done, err = client.Chat(talkative.DEFAULT_MODEL, func(cr *talkative.ChatResponse, err error) {}, nil, message)
 
 		assert.Nil(t, done)
 		assert.ErrorIs(t, err, talkative.ErrInvoke)
@@ -90,9 +90,14 @@ func TestChatValidation(t *testing.T) {
 
 	scenario = "non-json"
 	{
-		done, err = client.Chat(talkative.DEFAULT_MODEL, func(cr *talkative.ChatResponse, err error) {
-			assert.ErrorIs(t, err, talkative.ErrDecoding)
-		}, message)
+		done, err = client.Chat(
+			talkative.DEFAULT_MODEL,
+			func(cr *talkative.ChatResponse, err error) {
+				assert.ErrorIs(t, err, talkative.ErrDecoding)
+			},
+			nil,
+			message,
+		)
 
 		assert.Nil(t, err)
 		assert.NotNil(t, done)
@@ -102,7 +107,7 @@ func TestChatValidation(t *testing.T) {
 
 	scenario = "bad-request"
 	{
-		done, err = client.Chat("", func(cr *talkative.ChatResponse, err error) {}, message)
+		done, err = client.Chat("", func(cr *talkative.ChatResponse, err error) {}, nil, message)
 
 		assert.Nil(t, done)
 		assert.ErrorIs(t, err, talkative.ErrBadRequest)
@@ -200,7 +205,10 @@ func TestChatResponse(t *testing.T) {
 		} else {
 			sb.WriteString(cr.ChatMessage.Content)
 		}
-	}, message)
+	},
+		nil,
+		message,
+	)
 
 	assert.NotNil(t, done)
 	assert.Nil(t, err)
@@ -261,14 +269,14 @@ func TestPlainChatValidation(t *testing.T) {
 	}
 
 	// Assert callback error
-	done, err := client.PlainChat(talkative.DEFAULT_MODEL, nil)
+	done, err := client.PlainChat(talkative.DEFAULT_MODEL, nil, nil)
 	{
 		assert.Nil(t, done)
 		assert.ErrorIs(t, err, talkative.ErrCallback)
 	}
 
 	// Assert message error
-	done, err = client.PlainChat(talkative.DEFAULT_MODEL, func(cr string, err error) {})
+	done, err = client.PlainChat(talkative.DEFAULT_MODEL, func(cr string, err error) {}, nil)
 	{
 		assert.Nil(t, done)
 		assert.ErrorIs(t, err, talkative.ErrMessage)
@@ -278,7 +286,7 @@ func TestPlainChatValidation(t *testing.T) {
 
 	scenario = "not-found"
 	{
-		done, err = client.PlainChat(talkative.DEFAULT_MODEL, func(cr string, err error) {}, message)
+		done, err = client.PlainChat(talkative.DEFAULT_MODEL, func(cr string, err error) {}, nil, message)
 
 		assert.Nil(t, done)
 		assert.ErrorIs(t, err, talkative.ErrInvoke)
@@ -288,7 +296,7 @@ func TestPlainChatValidation(t *testing.T) {
 	{
 		done, err = client.PlainChat("", func(cr string, err error) {
 			assert.ErrorIs(t, err, talkative.ErrDecoding)
-		}, message)
+		}, nil, message)
 
 		assert.Nil(t, err)
 		assert.NotNil(t, done)
@@ -298,7 +306,7 @@ func TestPlainChatValidation(t *testing.T) {
 
 	scenario = "bad-request"
 	{
-		done, err = client.PlainChat(talkative.DEFAULT_MODEL, func(cr string, err error) {}, message)
+		done, err = client.PlainChat(talkative.DEFAULT_MODEL, func(cr string, err error) {}, nil, message)
 
 		assert.Nil(t, done)
 		assert.ErrorIs(t, err, talkative.ErrBadRequest)
@@ -403,7 +411,7 @@ func TestPlainChatResponse(t *testing.T) {
 
 			sb.WriteString(response.ChatMessage.Content)
 		}
-	}, message)
+	}, nil, message)
 
 	assert.NotNil(t, done)
 	assert.Nil(t, err)
