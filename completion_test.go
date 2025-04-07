@@ -95,16 +95,22 @@ func TestCompletionResponse(t *testing.T) {
 	server := mockServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		responses := []talkative.CompletionResponse{
 			{
-				Model:    talkative.DEFAULT_MODEL,
-				Response: "Hello",
+				Model: talkative.DEFAULT_MODEL,
+				Response: talkative.CompletionResponseMessage{
+					Response: "Hello",
+				},
 			},
 			{
-				Model:    talkative.DEFAULT_MODEL,
-				Response: ", ",
+				Model: talkative.DEFAULT_MODEL,
+				Response: talkative.CompletionResponseMessage{
+					Response: ", ",
+				},
 			},
 			{
-				Model:    talkative.DEFAULT_MODEL,
-				Response: "It is nice talking to you.",
+				Model: talkative.DEFAULT_MODEL,
+				Response: talkative.CompletionResponseMessage{
+					Response: "It is nice talking to you.",
+				},
 			},
 		}
 
@@ -155,7 +161,7 @@ func TestCompletionResponse(t *testing.T) {
 		if err != nil {
 			fmt.Println("Error: ", err)
 		} else {
-			sb.WriteString(cr.Response)
+			sb.WriteString(cr.Response.Response)
 		}
 	}, message)
 
@@ -250,16 +256,22 @@ func TestPlainCompletionResponse(t *testing.T) {
 	server := mockServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		responses := []talkative.CompletionResponse{
 			{
-				Model:    talkative.DEFAULT_MODEL,
-				Response: "Hello",
+				Model: talkative.DEFAULT_MODEL,
+				Response: talkative.CompletionResponseMessage{
+					Response: "Hello",
+				},
 			},
 			{
-				Model:    talkative.DEFAULT_MODEL,
-				Response: ", ",
+				Model: talkative.DEFAULT_MODEL,
+				Response: talkative.CompletionResponseMessage{
+					Response: ", ",
+				},
 			},
 			{
-				Model:    talkative.DEFAULT_MODEL,
-				Response: "It is nice talking to you.",
+				Model: talkative.DEFAULT_MODEL,
+				Response: talkative.CompletionResponseMessage{
+					Response: "It is nice talking to you.",
+				},
 			},
 		}
 
@@ -314,7 +326,7 @@ func TestPlainCompletionResponse(t *testing.T) {
 			json.Unmarshal([]byte(cr), &response)
 
 			if response != nil {
-				sb.WriteString(response.Response)
+				sb.WriteString(response.Response.Response)
 			}
 		}
 	}, message)

@@ -34,18 +34,26 @@ type CompletionParams struct {
 	Stream    *bool                  `json:"stream,omitempty"`     // Whether to get response in single shot rather than streaming
 	Raw       bool                   `json:"raw,omitempty"`        // If true, no formatting will be applied to the prompt
 	KeepAlive string                 `json:"keep_alive,omitempty"` // How long to keep the model will stay loaded into the memory. Default to 5m(inutes)
+	Tools     Tools                  `json:"tools,omitempty"`      // The tools to be used in the completion request
 }
 
 // CompletionResponse represents the response received after a completion request.
 //
 // It also embeds CompletionMetrics which includes upon completion
 type CompletionResponse struct {
-	Model     string `json:"model"`      // The model used for the completion.
-	Response  string `json:"response"`   // The generated response based on the prompt.
-	CreatedAt string `json:"created_at"` // The timestamp when the response was created.
-	Done      bool   `json:"done"`       // A boolean indicating if the completion process is finished.
+	Model     string                    `json:"model"`      // The model used for the completion.
+	Response  CompletionResponseMessage `json:"response"`   // The generated response based on the prompt.
+	CreatedAt string                    `json:"created_at"` // The timestamp when the response was created.
+	Done      bool                      `json:"done"`       // A boolean indicating if the completion process is finished.
 
 	CompletionMetrics // embeds CompletionMetrics
+}
+
+// CompletionResponseMessage represents the message structure for initiating a completion request.
+type CompletionResponseMessage struct {
+	Response  string      `json:"response"`             // The generated response based on the prompt.
+	Images    []ImageData `json:"images,omitempty"`     // The images associated with the completion.
+	ToolCalls []ToolCall  `json:"tool_calls,omitempty"` // The tool calls made during the completion process.
 }
 
 // CompletionMetrics struct encapsulates various metrics related to the completion process.

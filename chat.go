@@ -9,19 +9,25 @@ import (
 	"time"
 )
 
+// ImageData represents the raw binary data of an image file.
+type ImageData []byte
+
 // ChatMessage struct represents a single message sent or received in the chat.
 type ChatMessage struct {
-	Role    Role   `json:"role"`    // Role of the sender (user or assistant).
-	Content string `json:"content"` // Content of the message.
+	Role      Role        `json:"role"`                 // Role of the sender (system, user or assistant).
+	Content   string      `json:"content"`              // Content of the message.
+	Images    []ImageData `json:"images,omitempty"`     // Images associated with the message (optional)
+	ToolCalls []ToolCall  `json:"tool_calls,omitempty"` // Tool calls associated with the message (optional)
 }
 
-// CompletionParams represents the advanced parameters (Optional) to be supplied to the completion request.
+// ChatParams represents the advanced parameters (Optional) to be supplied to the chat request.
 type ChatParams struct {
-	Format    string                 `json:"format,omitempty"`     // The format to be used in the completion response
-	Options   map[string]interface{} `json:"options,omitempty"`    // The additional model parameters  listed in the Modelfile documentation
-	Template  string                 `json:"template,omitempty"`   // The prompt template to use (overrides what is defined in the Modelfile)
-	Stream    *bool                  `json:"stream,omitempty"`     // Whether to get response in single shot rather than streaming
-	KeepAlive string                 `json:"keep_alive,omitempty"` // How long to keep the model will stay loaded into the memory. Default to 5m(inutes)
+	Format    string         `json:"format,omitempty"`     // The format to be used in the chat response
+	Options   map[string]any `json:"options,omitempty"`    // The additional model parameters  listed in the Modelfile documentation
+	Template  string         `json:"template,omitempty"`   // The prompt template to use (overrides what is defined in the Modelfile)
+	Stream    *bool          `json:"stream,omitempty"`     // Whether to get response in single shot rather than streaming
+	KeepAlive string         `json:"keep_alive,omitempty"` // How long to keep the model will stay loaded into the memory. Default to 5m(inutes)
+	Tools     Tools          `json:"tools,omitempty"`      // The tools to be used in the chat request
 }
 
 // Callback function type used for handling individual chat responses and errors.
@@ -110,10 +116,10 @@ func (c *Client) Chat(model string, cb ChatCallBack, params *ChatParams, msgs ..
 		switch res.StatusCode {
 		case http.StatusBadRequest:
 			defer res.Body.Close()
+			body := map[string]any{}
+			json.NewDecoder(res.Body).Decode(&body)
 
-			body, _ := io.ReadAll(res.Body)
-
-			return nil, fmt.Errorf("%w\n%v", ErrBadRequest, body)
+			return nil, fmt.Errorf("%w: %v", ErrBadRequest, body["error"])
 		default:
 			return nil, fmt.Errorf("%w: please make sure ollama server is running and url is correct", ErrInvoke)
 		}
